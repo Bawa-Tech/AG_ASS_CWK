@@ -32,7 +32,7 @@ CREATE TABLE `residents` (
   `vote_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`vote_id`) REFERENCES `votes`(`id`)
-)
+);
 
 CREATE TABLE `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -41,8 +41,15 @@ CREATE TABLE `votes` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
   FOREIGN KEY (`resident_id`) REFERENCES `residents`(`id`)
-) 
+);
 
+CREATE TABLE `councils` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `hashed_password` varchar(512) NOT NULL,
+  `area` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
 -- populating dummy values
 
 -- the hash is sha256 of 'password'
@@ -50,5 +57,8 @@ insert into smes(company_name, hashed_password, contact) values ("test", "5e8848
 
 insert into products(product_name, product_description, size, type, price_band, sme_name) values ("test", "test", 12, "Household", "low", "test");
 
-INSERT INTO residents (name, password, product_id, vote_info)
-VALUES ('test', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1, 'voted');
+insert into residents (name, password, product_id, vote_info)
+values ('test', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1, 'voted');
+
+
+
