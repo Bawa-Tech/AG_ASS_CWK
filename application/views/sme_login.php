@@ -7,21 +7,24 @@
         <!-- <div style="height: 550px; width: 350px; background-color:azure"> -->
             <h2>SME LOGIN</h2>
 
-            @if($errors->any())
-            <div class="alert alert-danger">{{$errors->first()}}</div>
-            @endif
-            <form action="{{url('/sme/login')}}" method="post">
+            <?php
+            if ($this->session->flashdata('error')) {
+                echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
+            }
+            ?>
+
+            <form action=<?php echo base_url("index.php/sme/handle_login")?> method="post">
                 <!-- @csrf -->
                 <div class="row mb-3">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Username</label>
                     <div class="col-sm-10">
-                        <input type="text" name="username" class="form-control" id="inputEmail3">
+                        <input type="text" required name="username" class="form-control" id="inputEmail3">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
                     <div class="col-sm-10">
-                        <input type="password" name="password" class="form-control" id="inputPassword3">
+                        <input type="password" required name="password" class="form-control" id="inputPassword3">
                     </div>
                 </div>
                 <div class="row mb-3">

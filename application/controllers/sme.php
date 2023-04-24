@@ -10,6 +10,10 @@ class Sme extends CI_Controller
 		$this->load->helper('url');
 		$this->load->library('grocery_CRUD');
 		$this->load->library('table');
+		$this->load->library('session');
+		$this->load->model('SmeModel');
+		$this->load->helper("auth_helper");
+
 	}
 
 	public function index()
@@ -17,7 +21,7 @@ class Sme extends CI_Controller
 		$header_data = array(
 			"title" => "SME Login",
 			"previous_page_title" => "register",
-			"previous_page_link" => "/smart-counties-r-us/index.php/main/register"
+			"previous_page_link" => base_url("index.php/sme/register")
 		);
 
 		$this->load->view('header', $header_data);
@@ -35,7 +39,7 @@ class Sme extends CI_Controller
 		$header_data = array(
 			"title" => "SME Register",
 			"previous_page_title" => "Login",
-			"previous_page_link" => "/smart-counties-r-us/index.php/main/login"
+			"previous_page_link" => base_url("index.php/sme/login")
 		);
 
 		$this->load->view('header', $header_data);
@@ -45,6 +49,8 @@ class Sme extends CI_Controller
 
 	public function dashboard()
 	{
+		$this->check_if_is_allowed();
+
 		$header_data = array(
 			"title" => "SME Dashboard"
 		);
@@ -54,16 +60,104 @@ class Sme extends CI_Controller
 		$this->load->view('footer');
 	}
 
-	public function add_product() 
+	public function add_product()
 	{
 		$header_data = array(
 			"title" => "SME Add Product",
 			"previous_page_title" => "Dashboard",
-			"previous_page_link" => "/smart-counties-r-us/index.php/sme/dashboard"
+			"previous_page_link" => base_url("index.php/sme/dashboard")
 		);
 
 		$this->load->view('header', $header_data);
 		$this->load->view('sme_add_product');
 		$this->load->view('footer');
+	}
+
+	public function products() {
+		$header_data = array(
+			"title" => "SME Products",
+			"previous_page_title" => "Dashboard",
+			"previous_page_link" => base_url("index.php/sme/dashboard")
+		);
+
+		$products = $this->SmeModel->all_products_for_this_sme();
+
+		$this->load->view('header', $header_data);
+		$this->load->view('sme_products', $products);
+		$this->load->view('footer');
+	}
+
+	public function products_gcrud() {
+		$header_data = array(
+			"title" => "SME Products",
+			"previous_page_title" => "Dashboard",
+			"previous_page_link" => base_url("index.php/sme/dashboard")
+		);
+
+		$crud = new grocery_CRUD();
+		$crud->set_theme('datatables');
+
+    	$crud->set_table('products');
+    	$crud->set_subject('Product');
+    	$output = $crud->render();
+		// var_dump($output);
+		$this->load->view('header', $header_data);
+		$this->load->view('sme_products', $output);
+		$this->load->view('footer');
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	// Methods for handling form submissions
+	///////////////////////////////////////////////////////////////////////
+	
+	public function handle_login() {
+		$username = $this->input->post("username");
+		$password = $this->input->post("password");
+
+		// echo $username . " - " . $password;
+
+		if ( ! $this->SmeModel->authenticate_login($username, $password)) {
+			$this->session->set_flashdata('error', 'Invalid Credentials !!!');
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url("index.php/sme/dashboard"));
+		}
+	}
+
+	public function handle_add_product() {
+		$product_name = $this->input->post("product_name");
+		$product_description = $this->input->post("product_description");
+		$size = $this->input->post("size");
+		$type = $this->input->post("type");
+		$price_band = $this->input->post("price_band");
+
+		$response = $this->SmeModel->add_product($product_name, $product_description, $size, $type, $price_band);
+		if (gettype($response) == "string") {
+			$this->session->set_flashdata('error', $response);
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			// redirect to products page
+			echo $response;
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	// Private helper methods
+	///////////////////////////////////////////////////////////////////////
+	
+
+	/**
+	 * this private method is meant to be used inside of this
+	 * controller only. It validates the user's role via AuthHelper
+	 * if not valid, then this method redirects to login page for sme.
+	 */
+	private function check_if_is_allowed() {
+		$current_role = $this->session->userdata("role");
+
+		if (AuthHelper::is_allowed($current_role, "sme")) {
+			return true;
+		} else {
+			redirect(base_url("index.php/sme/login"));	
+		}
 	}
 }

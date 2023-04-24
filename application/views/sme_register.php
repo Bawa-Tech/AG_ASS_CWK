@@ -8,9 +8,11 @@
         <!-- <div style="height: 550px; width: 350px; background-color:azure"> -->
             <h2>SME Register</h2>
 
-            @if($errors->any())
-            <div class="alert alert-danger">{{$errors->first()}}</div>
-            @endif
+            <?php
+            if ($this->session->flashdata('error')) {
+                echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
+            }
+            ?>
             <form action="{{url('/sme/register')}}" method="post">
                 <div class="row mb-3">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Company Name</label>

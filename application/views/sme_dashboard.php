@@ -15,12 +15,15 @@
     <div class="row mt-5">
         <div class="col-md-4 mt-5">
             <button class="box">
-                <a href="/smart-counties-r-us/index.php/sme/add_product">Add Product</a> 
+                <a href=<?php echo base_url("index.php/sme/add_product") ?>>Add Product</a>
             </button>
         </div>
 
         <div class="col-md-4 mt-5">
-            <button class="box"> View all Products </button>
+            <button class="box">
+                <a href=<?php echo base_url("index.php/sme/products") ?>>View all Products</a>
+            </button>
+
         </div>
 
         <div class="col-md-4 mt-5">
