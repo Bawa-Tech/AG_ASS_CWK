@@ -13,6 +13,8 @@ class Resident extends CI_Controller
 		$this->load->library('session');
 		$this->load->model('ResidentModel');
 		$this->load->helper("auth_helper");
+		$this->table->set_heading('#', 'Product Name', 'Description', 'Size', 'Type', 'Price Band', 'Company Name');
+
 
 	}
 
@@ -69,20 +71,43 @@ class Resident extends CI_Controller
 		redirect($_SERVER['HTTP_REFERER']);
 	}
 
-
 	public function products() {
 		$header_data = array(
-			"title" => "SME Products",
-			"previous_page_title" => "Dashboard",
-			"previous_page_link" => base_url("index.php/resident/dashboard")
-		);
-	
-		$products = $this->SmeModel->all_products_for_this_sme();
-	
+            "title" => "All Products",
+            "previous_page_title" => "Login",
+            "previous_page_link" => base_url("index.php/resident/login")
+        );
+		$products = $this->ResidentModel->get_all_products();
 		$this->load->view('header', $header_data);
-		$this->load->view('sme_products', array('products' => $products));
-		$this->load->view('footer');
+        $this->load->view('resident_dashboard', array("products" => $products));
+        $this->load->view('footer');
+
+		// if (empty($products)) {
+		// 	// handle empty products case, e.g. show an error message
+		// 	$this->session->set_flashdata('error', 'No products found!!!');
+		// 	$this->load->view('resident_product',  array("products" => $products));
+		// } else {
+		// 	$this->session->set_flashdata('error', 'products found!!!');
+		// 	$this->load->view('resident_product', array("products" => $products));
+		// }
 	}
+	
+
+	// public function products() {
+	// 	$header_data = array(
+	// 		"title" => "All Products",
+	// 		"previous_page_title" => "Dashboard",
+	// 		"previous_page_link" => base_url("index.php/resident/dashboard")
+	// 	);
+	
+	// 	$products = $this->ResidentModel->get_all_products();
+	
+	// 	$this->load->view('header', $header_data);
+	// 	$this->load->view('resident_product', array('products' => $products));
+	// 	$this->load->view('footer');
+	// }
+	
+
 	
 
 
@@ -97,8 +122,23 @@ class Resident extends CI_Controller
 
 		// echo $username . " - " . $password;
 
-		if ( ! $this->SmeModel->authenticate_login($username, $password)) {
+		if ( ! $this->ResidentModel->authenticate_login($username, $password)) {
 			$this->session->set_flashdata('error', 'Invalid Credentials !!!');
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url("index.php/resident/dashboard"));
+		}
+	}
+	public function handle_signup() {
+		$name = $this->input->post("name");
+		$password = $this->input->post("password");
+		$area = $this->input->post("area");
+		$age_bracket = $this->input->post("age_bracket");
+
+		// echo $username . " - " . $password;
+
+		if ( ! $this->ResidentModel->signup($name,$password,$area,$age_bracket)) {
+			$this->session->set_flashdata('error', 'Invalid Data!!!');
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url("index.php/resident/dashboard"));

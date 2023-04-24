@@ -22,21 +22,25 @@ create table products(
     -- the associated sme,
     sme_name varchar(24) not null
 );
+
 CREATE TABLE `residents` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `hashed_password` varchar(512) NOT NULL,
   `area` varchar(255) NOT NULL,
+  `age_bracket` varchar(255) NOT NULL,
+  `vote_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`vote_id`) REFERENCES `votes`(`id`)
-) 
+)
 
 CREATE TABLE `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `product_id` varchar(255) NOT NULL,
-  `area` varchar(255) NOT NULL,
+  `resident_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`vote_id`) REFERENCES `votes`(`id`)
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+  FOREIGN KEY (`resident_id`) REFERENCES `residents`(`id`)
 ) 
 
 -- populating dummy values

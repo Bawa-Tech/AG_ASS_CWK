@@ -31,6 +31,35 @@ class ResidentModel extends CI_Model
             return true;
         }
     }
+    public function signup($name, $password, $area, $age_bracket){
+        $hashed_password = hash("sha256", $password);
+        $insert_data = [
+            "name" => $name,
+            "hashed_password" => $hashed_password,
+            "area" => $area,
+            "age_bracket" => $age_bracket,
+        ];
+        if (!$this->db->insert('residents', $insert_data)) {
+            return false; // Insert failed, return false
+        }
+        return true; // Insert successful
+    }
+    
 
+    
+    public function get_all_products() {
+        $query = $this->db->get('products');
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+            $this->session->set_flashdata('error', 'products found!!!');
+        } else {
+            $this->session->set_flashdata('error', 'products nnfound!!!');
+            return array();
+        }
+    }
+    
+    
+    
+    
 
 }

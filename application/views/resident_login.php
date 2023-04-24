@@ -13,7 +13,7 @@
             }
             ?>
 
-            <form action=<?php echo base_url("index.php/sme/handle_login")?> method="post">
+            <form action=<?php echo base_url("index.php/resident/handle_login")?> method="post">
                 <!-- @csrf -->
                 <div class="row mb-3">
                     <label for="inputEmail3" class="col-sm-2 col-form-label">Username</label>
