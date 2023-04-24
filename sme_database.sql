@@ -22,6 +22,22 @@ create table products(
     -- the associated sme,
     sme_name varchar(24) not null
 );
+CREATE TABLE `residents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `area` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`vote_id`) REFERENCES `votes`(`id`)
+) 
+
+CREATE TABLE `votes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` varchar(255) NOT NULL,
+  `area` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`vote_id`) REFERENCES `votes`(`id`)
+) 
 
 -- populating dummy values
 
@@ -29,3 +45,6 @@ create table products(
 insert into smes(company_name, hashed_password, contact) values ("test", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8", "12345678");
 
 insert into products(product_name, product_description, size, type, price_band, sme_name) values ("test", "test", 12, "Household", "low", "test");
+
+INSERT INTO residents (name, password, product_id, vote_info)
+VALUES ('test', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1, 'voted');
