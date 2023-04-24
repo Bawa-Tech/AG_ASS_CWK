@@ -21,17 +21,19 @@ class ResidentModel extends CI_Model
 
         // If a row is returned, the username and password are valid
         $valid = $query->num_rows() === 1;
-        
-        if ( $valid ) {
+
+        if ($valid) {
             $this->session->set_userdata(array(
                 "name" => $name,
-                "role" => "resident"
+                "role" => "resident",
+                "resident_id" => $query->result_array()[0]['id']
             ));
 
             return true;
         }
     }
-    public function signup($name, $password, $area, $age_bracket){
+    public function signup($name, $password, $area, $age_bracket)
+    {
         $hashed_password = hash("sha256", $password);
         $insert_data = [
             "name" => $name,
@@ -44,10 +46,11 @@ class ResidentModel extends CI_Model
         }
         return true; // Insert successful
     }
-    
 
-    
-    public function get_all_products() {
+
+
+    public function get_all_products()
+    {
         $query = $this->db->get('products');
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -57,9 +60,31 @@ class ResidentModel extends CI_Model
             return array();
         }
     }
-    
-    
-    
-    
 
+    public function vote($product_id)
+    {
+        $resident_id = $this->session->userdata("resident_id");
+
+        $query = $this->db->get_where('votes', array(
+            'resident_id' => $resident_id,
+            'product_id' => $product_id
+        ));
+
+        $unique = $query->num_rows() === 0;
+
+        if (!$unique) {
+            return "Already voted !! !!";
+        }
+
+        $inserted = $this->db->insert('votes', [
+            'resident_id' => $resident_id,
+            'product_id' => $product_id
+        ]);
+
+        if (!$inserted) {
+            return "Problem occured with voting";
+        }
+
+        return true;
+    }
 }

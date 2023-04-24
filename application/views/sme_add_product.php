@@ -9,7 +9,7 @@
                 echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
             }
             ?>
-            <form class="form" action=<?php echo base_url("index.php/sme/handle_add_product")?> method="post">
+            <form class="form" action=<?php echo base_url("index.php/sme/handle_add_product") ?> method="post">
                 <div class="row mb-3">
                     <label for="inputEmail3" class="col-sm-3 col-form-label">Product Name</label>
                     <div class="col-sm-9">
@@ -35,7 +35,7 @@
                         <select name="type" required class="form-control" id="">
                             <option value="household">Household</option>
                             <option value="office">Office</option>
-                            <option value="outdoors">outdoors</option>
+                            <option value="outdoors">Outdoors</option>
                         </select>
                     </div>
                 </div>
@@ -48,6 +48,14 @@
                             <option value="mid">Mid Range</option>
                             <option value="high">High Range</option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label for="inputContact1" class="col-sm-3 col-form-label">Price in Pounds</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="price" class="form-control" id="inputContact1">
+
                     </div>
                 </div>
                 <div class="row mb-3">

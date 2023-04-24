@@ -15,8 +15,6 @@ class Resident extends CI_Controller
 		$this->load->model('CouncilModel');
 		$this->load->helper("auth_helper");
 		$this->table->set_heading('#', 'Product Name', 'Description', 'Size', 'Type', 'Price Band', 'Company Name');
-
-
 	}
 
 	public function index()
@@ -52,86 +50,54 @@ class Resident extends CI_Controller
 
 	public function dashboard()
 	{
-		// $this->check_if_is_allowed();
-
-		$header_data = array(
-			"title" => "Resident Dashboard"
-		);
-
-		$this->load->view('header', $header_data);
-		$this->load->view('resident_dashboard');
-		$this->load->view('footer');
+		$this->check_if_is_allowed();
+		$this->products();
 	}
 
-	public function vote($product_id) {
-		$resident_id = $this->session->userdata('resident_id');
-		$vote = $this->input->post('vote');
-	
-		$this->ResidentModel->vote($resident_id, $product_id, $vote);
-	
+	public function vote($product_id)
+	{
+		$resp = $this->ResidentModel->vote($product_id);
+		if (gettype($resp) == "string") {
+			$this->session->set_flashdata('error', $resp);
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url("index.php/resident/dashboard"));
+		}
+
 		redirect($_SERVER['HTTP_REFERER']);
 	}
 
-	public function products() {
+	public function products()
+	{
 		$header_data = array(
-            "title" => "All Products",
-            "previous_page_title" => "Login",
-            "previous_page_link" => base_url("index.php/resident/login")
-        );
+			"title" => "All Products",
+			"previous_page_title" => "Login",
+			"previous_page_link" => base_url("index.php/resident/login")
+		);
 		$products = $this->ResidentModel->get_all_products();
 		$this->load->view('header', $header_data);
-        $this->load->view('resident_dashboard', array("products" => $products));
-        $this->load->view('footer');
-
-		// if (empty($products)) {
-		// 	// handle empty products case, e.g. show an error message
-		// 	$this->session->set_flashdata('error', 'No products found!!!');
-		// 	$this->load->view('resident_product',  array("products" => $products));
-		// } else {
-		// 	$this->session->set_flashdata('error', 'products found!!!');
-		// 	$this->load->view('resident_product', array("products" => $products));
-		// }
+		$this->load->view('resident_dashboard', array("products" => $products));
+		$this->load->view('footer');
 	}
-	
-	
-
-	// public function products() {
-	// 	$header_data = array(
-	// 		"title" => "All Products",
-	// 		"previous_page_title" => "Dashboard",
-	// 		"previous_page_link" => base_url("index.php/resident/dashboard")
-	// 	);
-	
-	// 	$products = $this->ResidentModel->get_all_products();
-	
-	// 	$this->load->view('header', $header_data);
-	// 	$this->load->view('resident_product', array('products' => $products));
-	// 	$this->load->view('footer');
-	// }
-	
-
-	
-
-
 
 	///////////////////////////////////////////////////////////////////////
 	// Methods for handling form submissions
 	///////////////////////////////////////////////////////////////////////
-	
-	public function handle_login() {
+
+	public function handle_login()
+	{
 		$username = $this->input->post("username");
 		$password = $this->input->post("password");
 
-		// echo $username . " - " . $password;
-
-		if ( ! $this->ResidentModel->authenticate_login($username, $password)) {
+		if (!$this->ResidentModel->authenticate_login($username, $password)) {
 			$this->session->set_flashdata('error', 'Invalid Credentials !!!');
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url("index.php/resident/dashboard"));
 		}
 	}
-	public function handle_signup() {
+	public function handle_signup()
+	{
 		$name = $this->input->post("name");
 		$password = $this->input->post("password");
 		$area = $this->input->post("area");
@@ -139,7 +105,7 @@ class Resident extends CI_Controller
 
 		// echo $username . " - " . $password;
 
-		if ( ! $this->ResidentModel->signup($name,$password,$area,$age_bracket)) {
+		if (!$this->ResidentModel->signup($name, $password, $area, $age_bracket)) {
 			$this->session->set_flashdata('error', 'Invalid Data!!!');
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -148,39 +114,25 @@ class Resident extends CI_Controller
 	}
 
 
-	public function showAreaDropdown() {
-		// create instance of the model
-		$this->load->model('CouncilModel');
-		
-		// get all areas from the model
-		$areas = $this->CouncilModel->getAllAreas();
-		
-		// pass the areas to the view
-		$data['areas'] = $areas;
-		$this->load->view('resident_register', $data);
-
-	}
-	
-	
-	
 
 	///////////////////////////////////////////////////////////////////////
 	// Private helper methods
 	///////////////////////////////////////////////////////////////////////
-	
+
 
 	/**
 	 * this private method is meant to be used inside of this
 	 * controller only. It validates the user's role via AuthHelper
 	 * if not valid, then this method redirects to login page for sme.
 	 */
-	private function check_if_is_allowed() {
+	private function check_if_is_allowed()
+	{
 		$current_role = $this->session->userdata("role");
 
 		if (AuthHelper::is_allowed($current_role, "resident")) {
 			return true;
 		} else {
-			redirect(base_url("index.php/resident/login"));	
+			redirect(base_url("index.php/resident/login"));
 		}
 	}
 }
