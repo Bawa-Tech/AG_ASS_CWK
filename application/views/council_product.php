@@ -1,18 +1,15 @@
 <div class="container">
 
-    <div class="row">
-        <div class="container">
-            <?php
-            if ($this->session->flashdata('error')) {
-                echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
-            }
-            ?>
-
-        </div>
-    </div>
     <div style="display: flex; justify-content:center; margin-top: 100px; text-align: center;">
+        <!-- <?php
+                $this->table->set_heading(['#', 'Product Name', 'description', 'Size', 'Type', 'Price Band', 'Company Name']);
+                $this->table->set_caption('Products');
+                $this->table->set_template(array(
+                    'table_open' => '<table class="table table-striped table-hover">'
+                ));
+                echo $this->table->generate($products);
 
-
+                ?> -->
 
         <?php
         $this->table->set_heading(['#', 'Product Name', 'description', 'Size', 'Type', 'Price Band', 'Price', 'Company Name']);
@@ -31,7 +28,7 @@
             $price = $p["price"];
             $sme_name = $p["sme_name"];
 
-            $vote_button = "<a href='" . base_url("index.php/resident/vote/" . $id) . "'><span class='btn btn-primary' style='color: white; align-self: right;'>Add Vote</span></a>";
+            $vote_button = "<a href='" . base_url("index.php/council/edit/" . $id) . "'><span class='btn btn-primary' style='color: white; align-self: right;'>Edit SME</span></a>";
 
 
             $this->table->add_row($id, $product_name, $product_description, $size, $type, $price_band, $price, $sme_name, $vote_button);
@@ -39,5 +36,6 @@
 
         echo $this->table->generate();
         ?>
+
     </div>
 </div>

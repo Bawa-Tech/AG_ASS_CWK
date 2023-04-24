@@ -33,11 +33,15 @@
                     <select name="area" class="form-control" id="inputArea">
                         
                         <option value="">Select an area</option>
-                        <?php foreach ($areas as $area): ?>
-                            var_dump($area);
-                            die;
-                            <option value="<?= $area['area'] ?>" <?= ($councils['area'] == $area['area']) ? "selected" : "" ?>><?= $area['area'] ?></option>
-                        <?php endforeach; ?>
+                        <?php 
+                        
+                        foreach ($areas as $area) {
+                            // var_dump($area);
+                            // die;
+                           echo  '<option value="'.$area['area'].'">'. $area['area'] .'</option>';
+                        
+                        }
+                        ?>
                     </select>
                     </div>
                 </div>
@@ -48,11 +52,11 @@
                         <select name="age_bracket" class="form-select" aria-label="Age Bracket">
                             <option value="" selected>Choose an age bracket</option>
                             <option value="Under 18">Under 18</option>
-                            <!-- <option value="18-24">18-24</option>
+                            <option value="18-24">18-24</option>
                             <option value="25-34">25-34</option>
                             <option value="35-44">35-44</option>
                             <option value="45-54">45-54</option>
-                            <option value="55-64">55-64</option> -->
+                            <option value="55-64">55-64</option>
                             <option value="65 or over">65 or over</option>
                         </select>
                     </div>
