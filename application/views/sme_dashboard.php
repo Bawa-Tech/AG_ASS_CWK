@@ -27,7 +27,9 @@
         </div>
 
         <div class="col-md-4 mt-5">
-            <button class="box"> View Votes on Products </button>
+            <button class="box">
+                <a href=<?php echo base_url("index.php/sme/product_votes") ?>>View Votes on Products</a>
+            </button>
         </div>
     </div>
 </div>

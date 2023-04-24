@@ -104,6 +104,8 @@ class Sme extends CI_Controller
 
 	public function products_gcrud()
 	{
+		// not working, grocery cruds operation not working
+
 		$header_data = array(
 			"title" => "SME Products",
 			"previous_page_title" => "Dashboard",
@@ -119,6 +121,26 @@ class Sme extends CI_Controller
 		// var_dump($output);
 		$this->load->view('header', $header_data);
 		$this->load->view('sme_products', $output);
+		$this->load->view('footer');
+	}
+
+	public function product_votes()
+	{
+		$header_data = array(
+			"title" => "SME Product Votes",
+			"previous_page_title" => "Dashboard",
+			"previous_page_link" => base_url("index.php/sme/dashboard")
+		);
+
+		$this->db->select('products.product_name, COUNT(*) as vote_count');
+		$this->db->from('votes');
+		$this->db->join('products', 'products.id = votes.product_id');
+		$this->db->group_by('product_id');
+		$query = $this->db->get();
+		$result = $query->result_array();
+
+		$this->load->view('header', $header_data);
+		$this->load->view('sme_product_votes', array("products" => $result));
 		$this->load->view('footer');
 	}
 

@@ -49,6 +49,7 @@ class Resident extends CI_Controller
 
 	public function dashboard()
 	{
+		$this->check_if_is_allowed();
 		$this->products();
 	}
 

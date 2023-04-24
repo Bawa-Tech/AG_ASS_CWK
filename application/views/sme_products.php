@@ -49,21 +49,6 @@
                 'table_open' => '<table class="table table-striped table-hover pt-0 mt-0">'
             ));
 
-            // echo var_dump($products->result());
-            // die;
-            // foreach ($products->result() as $p) {
-            //     // var_dump($p->{'id'}O
-
-            //     $id  = $p->{'id'};
-            //     $name = $p->{'product_name'};
-            //     $desc = $p->{'product_description'};
-            //     $size = $p->{'size'};
-            //     $type = $p->{'type'};
-            //     $price_band = $p->{'price_band'};
-            //     $sme = $p->{'sme_name'};
-
-            //     $this->table->add_row($id, $name, $desc, $size, $type, $price_band, $sme);
-            // }
 
             echo $this->table->generate($products);
         }
