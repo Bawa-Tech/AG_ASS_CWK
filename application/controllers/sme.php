@@ -13,7 +13,7 @@ class Sme extends CI_Controller
 		$this->load->library('session');
 		$this->load->model('SmeModel');
 		$this->load->helper("auth_helper");
-
+		$this->load->library('table');
 	}
 
 	public function index()
@@ -73,21 +73,37 @@ class Sme extends CI_Controller
 		$this->load->view('footer');
 	}
 
-	public function products() {
+	public function products()
+	{
+
+
+		if ($this->input->server('REQUEST_METHOD') == "POST") {
+			$type = $this->input->post("type");
+			$price_less_then = $this->input->post("price_less_then");
+
+			if (!$type == "" || !$price_less_then == "") {
+				$products = $this->SmeModel->filtered_products($type, $price_less_then);
+			} else {
+				$products = $this->SmeModel->all_products_for_this_sme();
+			}
+		} else {
+
+			$products = $this->SmeModel->all_products_for_this_sme();
+		}
+
 		$header_data = array(
 			"title" => "SME Products",
 			"previous_page_title" => "Dashboard",
 			"previous_page_link" => base_url("index.php/sme/dashboard")
 		);
 
-		$products = $this->SmeModel->all_products_for_this_sme();
-
 		$this->load->view('header', $header_data);
-		$this->load->view('sme_products', $products);
+		$this->load->view('sme_products', array("products" => $products));
 		$this->load->view('footer');
 	}
 
-	public function products_gcrud() {
+	public function products_gcrud()
+	{
 		$header_data = array(
 			"title" => "SME Products",
 			"previous_page_title" => "Dashboard",
@@ -97,9 +113,9 @@ class Sme extends CI_Controller
 		$crud = new grocery_CRUD();
 		$crud->set_theme('datatables');
 
-    	$crud->set_table('products');
-    	$crud->set_subject('Product');
-    	$output = $crud->render();
+		$crud->set_table('products');
+		$crud->set_subject('Product');
+		$output = $crud->render();
 		// var_dump($output);
 		$this->load->view('header', $header_data);
 		$this->load->view('sme_products', $output);
@@ -109,14 +125,15 @@ class Sme extends CI_Controller
 	///////////////////////////////////////////////////////////////////////
 	// Methods for handling form submissions
 	///////////////////////////////////////////////////////////////////////
-	
-	public function handle_login() {
+
+	public function handle_login()
+	{
 		$username = $this->input->post("username");
 		$password = $this->input->post("password");
 
 		// echo $username . " - " . $password;
 
-		if ( ! $this->SmeModel->authenticate_login($username, $password)) {
+		if (!$this->SmeModel->authenticate_login($username, $password)) {
 			$this->session->set_flashdata('error', 'Invalid Credentials !!!');
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -124,40 +141,60 @@ class Sme extends CI_Controller
 		}
 	}
 
-	public function handle_add_product() {
-		$product_name = $this->input->post("product_name");
-		$product_description = $this->input->post("product_description");
-		$size = $this->input->post("size");
-		$type = $this->input->post("type");
-		$price_band = $this->input->post("price_band");
+	public function handle_register()
+	{
+		$company_name = $this->input->post("company_name");
+		$contact = $this->input->post("contact");
+		$password = $this->input->post("password");
 
-		$response = $this->SmeModel->add_product($product_name, $product_description, $size, $type, $price_band);
+
+		$response = $this->SmeModel->register($company_name, $contact, $password);
 		if (gettype($response) == "string") {
 			$this->session->set_flashdata('error', $response);
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			// redirect to products page
-			echo $response;
+			redirect(base_url("index.php/sme/dashboard"));
+		}
+	}
+
+	public function handle_add_product()
+	{
+		$product_name = $this->input->post("product_name");
+		$product_description = $this->input->post("product_description");
+		$size = $this->input->post("size");
+		$type = $this->input->post("type");
+		$price_band = $this->input->post("price_band");
+		$price = $this->input->post("price");
+
+		$response = $this->SmeModel->add_product($product_name, $product_description, $size, $type, $price_band, $price);
+		if (gettype($response) == "string") {
+			$this->session->set_flashdata('error', $response);
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			// redirect to products page
+			redirect(base_url("index.php/sme/products"));
 		}
 	}
 
 	///////////////////////////////////////////////////////////////////////
 	// Private helper methods
 	///////////////////////////////////////////////////////////////////////
-	
+
 
 	/**
 	 * this private method is meant to be used inside of this
 	 * controller only. It validates the user's role via AuthHelper
 	 * if not valid, then this method redirects to login page for sme.
 	 */
-	private function check_if_is_allowed() {
+	private function check_if_is_allowed()
+	{
 		$current_role = $this->session->userdata("role");
 
 		if (AuthHelper::is_allowed($current_role, "sme")) {
 			return true;
 		} else {
-			redirect(base_url("index.php/sme/login"));	
+			redirect(base_url("index.php/sme/login"));
 		}
 	}
 }
