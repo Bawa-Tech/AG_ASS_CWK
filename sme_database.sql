@@ -39,6 +39,13 @@ CREATE TABLE `votes` (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE `councils` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `hashed_password` varchar(512) NOT NULL,
+  `area` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
 -- populating dummy values
 -- the hash is sha256 of 'password'
 insert into

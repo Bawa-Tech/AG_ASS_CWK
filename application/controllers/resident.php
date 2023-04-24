@@ -12,6 +12,7 @@ class Resident extends CI_Controller
 		$this->load->library('table');
 		$this->load->library('session');
 		$this->load->model('ResidentModel');
+		$this->load->model('CouncilModel');
 		$this->load->helper("auth_helper");
 		$this->table->set_heading('#', 'Product Name', 'Description', 'Size', 'Type', 'Price Band', 'Company Name');
 	}
@@ -41,9 +42,9 @@ class Resident extends CI_Controller
 			"previous_page_title" => "Login",
 			"previous_page_link" => base_url("index.php/resident/login")
 		);
-
+		$areas = $this->CouncilModel->getAllAreas();
 		$this->load->view('header', $header_data);
-		$this->load->view('resident_register');
+		$this->load->view('resident_register',array("areas"=>$areas));
 		$this->load->view('footer');
 	}
 
